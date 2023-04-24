@@ -1,8 +1,10 @@
 #include "Serial.h"
 
-Serial::Serial(const std::string &port)
+Serial::Serial(const std::string &port, Serial::Interpreter interpreter )
     : m_ioservice(),
-      m_serial(m_ioservice, "/dev/ttyACM0") {
+      m_serial(m_ioservice, "/dev/ttyACM0"),
+      m_thread(&Serial::reading, this),
+      m_interpreter(interpreter) {
     m_serial.set_option(boost::asio::serial_port_base::baud_rate(115200));
     m_serial.set_option(boost::asio::serial_port::flow_control(boost::asio::serial_port::flow_control::none));
     m_serial.set_option(boost::asio::serial_port::parity(boost::asio::serial_port::parity::none));
@@ -25,3 +27,9 @@ std::string Serial::read() {
     std::string message(boost::asio::buffer_cast<const char *>(buffer.data()), buffer.size());
     return message;
 }
+
+void Serial::reading(void) {
+    for (;;)
+        m_interpreter( read() );
+}
+

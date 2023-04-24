@@ -1,23 +1,18 @@
-#include "Command.h"
+#include "SerialPort.h"
 #include "Gpio.h"
 
+void run(const String &message);
+
+SerialPort port(115200, run);
 Gpio led(LED_BUILTIN);
 
 void setup() {
-  Serial.begin(115200);
+  port.setup();
+  led.setup();
 }
 
 void loop() {
-  static String buffer;
-  if (Serial.available() > 0) {
-    char c = Serial.read();
-    if (c == '\n') {
-      buffer = clean(buffer);
-      run(buffer);
-      buffer = String();
-    } else
-      buffer += c;
-  }
+  port.update();
 }
 
 void run(const String &message) {
@@ -35,25 +30,17 @@ void run(const String &message) {
     led.on();
   } else if (action == "off") {
     led.off();
-  } else if (action == "hello") {
-    Serial.print("Hi there!\n");
+  } else if (action == "hi") {
+    port.send("Hi there!");
   } else {
-    print("Ops, '");
-    print(message);
-    println("' command not found!");
-    return;
+    port.send("Ops, '" + message + "' command not found!");
   }
-  Serial.print(message + "\n");
 }
 
 void move(float vx, float vy) {
-  print("Move motor ");
-  print(vx);
-  print(" ");
-  println(vy);
+  
 }
 
 void look(float angle) {
-  print("Look camera ");
-  println(angle);
+  
 }

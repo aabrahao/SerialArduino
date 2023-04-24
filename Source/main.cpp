@@ -1,6 +1,13 @@
 #include <iostream>
 #include "Serial.h"
 
+class Reinterpretor {
+public:
+    void operator()(const std::string &message) const {
+        std::cout << "arduino reinterpreted>" << message << std::endl;
+    }
+};
+
 int main(int argc, char *argv[]) {
     Serial serial("/dev/ttyACM0");
     std::string cmd;
@@ -10,8 +17,6 @@ int main(int argc, char *argv[]) {
         if (cmd == "bye")
             break;
         serial.write(cmd);
-        std::string reply = serial.read();
-        std::cout << "arduino> " << reply << std::endl;
     }
     std::cout << "Bye!" << std::endl;
     return 0;

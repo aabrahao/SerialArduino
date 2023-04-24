@@ -3,9 +3,8 @@
 
 class Gpio {
 public:
-  Gpio(int pin) : m_pin(pin) {
-    pinMode(m_pin, OUTPUT);  
-  }
+  Gpio(int pin) : m_pin(pin) { }
+  void setup() { pinMode(m_pin, OUTPUT); }
   void on() { digitalWrite(m_pin, HIGH); }
   void off() { digitalWrite(m_pin, LOW); }
 private:
